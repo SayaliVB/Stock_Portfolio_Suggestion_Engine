@@ -59,6 +59,7 @@ var routes = [
     component: <Tables />,
     layout: "/admin",
   },
+  
   {
     path: "/login",
     name: "Login",
