@@ -67,7 +67,7 @@ def home():
 def suggest_portfolio():
     """Handle portfolio suggestions."""
     data = request.json
-    investment = data.get("investment")
+    investment = int(data.get("investment"))
     strategies = data.get("strategies")  # A list of selected strategies
     split_equally = data.get("split_equally", True)  # Default to split equally
 
