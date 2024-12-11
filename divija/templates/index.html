@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Portfolio Suggestion Engine</title>
+    <link rel="stylesheet" type="text/css"  href="/static/styles.css">
+</head>
+<body>
+    <!-- Header Section -->
+    <div class="header">
+        <h1>Stock Portfolio Suggestion Engine</h1>
+    </div>
+
+   <!-- Stock Ticker Section -->
+<div class="stock-ticker">
+    <marquee behavior="scroll" direction="left">
+        {% for stock, details in market_ticker.items() %}
+            <span>
+                {{ stock }}: ${{ details['price'] }}
+                <span style="color: {% if details['change'] >= 0 %}green{% else %}red{% endif %};">
+                    ({{ details['change'] | round(2) }})
+                </span>
+            </span>&nbsp;&nbsp;&nbsp;&nbsp;
+        {% endfor %}
+    </marquee>
+</div>
+
+
+    
+
+    <!-- Form Section -->
+    <div class="form-container">
+        <form method="post">
+            <div class="step">
+                <h3>1. Enter Investment Amount</h3>
+                <label for="investment">Investment Amount (USD):</label>
+                <input type="number" id="investment" name="investment" min="5000" required>
+            </div>
+
+            <div class="step">
+                <h3>2. Choose Investment Strategies (Up to 2)</h3>
+                {% for strategy in strategies %}
+                    <input type="checkbox" name="strategies" value="{{ strategy }}"> {{ strategy }}<br>
+                {% endfor %}
+            </div>
+
+            <div class="step">
+                <h3>3. Split Investment Equally?</h3>
+                <input type="radio" name="split_equally" value="yes" checked> Yes
+                <input type="radio" name="split_equally" value="no"> No
+            </div>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+    
+    <div class="market-overview">
+        <h2>Market Overview</h2>
+        <div id="tradingview-widget-container"></div>
+        <script type="text/javascript">
+            new TradingView.MarketOverviewWidget({
+                "container_id": "tradingview-widget-container",
+                "showChart": true,
+                "locale": "en",
+                "width": "100%",
+                "height": 400,
+                "isTransparent": false,
+                "showSymbolLogo": true,
+                "colorTheme": "light",
+                "tabs": [
+                    {
+                        "title": "Indices",
+                        "symbols": [
+                            { "s": "INDEX:SPX", "d": "S&P 500" },
+                            { "s": "INDEX:IUXX", "d": "NASDAQ 100" },
+                            { "s": "INDEX:DOWI", "d": "Dow 30" }
+                        ]
+                    },
+                    {
+                        "title": "Commodities",
+                        "symbols": [
+                            { "s": "CME_MINI:ES1!", "d": "S&P Futures" },
+                            { "s": "COMEX:GC1!", "d": "Gold" },
+                            { "s": "NYMEX:CL1!", "d": "Crude Oil" }
+                        ]
+                    },
+                    {
+                        "title": "Forex",
+                        "symbols": [
+                            { "s": "FX:EURUSD", "d": "EUR/USD" },
+                            { "s": "FX:GBPUSD", "d": "GBP/USD" },
+                            { "s": "FX:USDJPY", "d": "USD/JPY" }
+                        ]
+                    }
+                ]
+            });
+        </script>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js"></script>
+    </div>
+</body>
+</html>
