@@ -21,7 +21,14 @@
         <div class="card-container">
             {% for stock, details in result.portfolio.items() %}
             <div class="card">
-                <h3>{{ stock }}</h3>
+                <!-- Make the stock symbol clickable -->
+                <h3 class="tooltip">
+                    <a href="https://finance.yahoo.com/quote/{{ stock }}" target="_blank" class="stock-link">
+                        {{ stock }}
+                    </a>
+                    <span class="tooltiptext">View details for {{ stock }} on Yahoo Finance</span>
+                </h3>
+                
                 <p>Price: ${{ details["price"] }}</p>
                 <p>Allocated Shares: {{ details["shares"] }}</p>
                 <p>Total Value: ${{ "%.2f" | format(details["allocation"]) }}</p>
@@ -40,6 +47,5 @@
     </div>
     {% endfor %}
 
-   
 </body>
 </html>
