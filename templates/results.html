@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Results</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <h1>Stock Portfolio Suggestion Engine</h1>
+
+    <!-- Total Portfolio Value -->
+    <div class="portfolio-value">
+        Total Portfolio Value: ${{ "%.2f" | format(overall_total_value) }}
+    </div>
+
+    {% for result in results %}
+    <div class="strategy-section">
+        <h2>{{ result.strategy }}</h2>
+        <p class="strategy-total"><strong>Total Value for {{ result.strategy }}:</strong> ${{ "%.2f" | format(result.total_value) }}</p>
+        <div class="card-container">
+            {% for stock, details in result.portfolio.items() %}
+            <div class="card">
+                <!-- Make the stock symbol clickable -->
+                <h3 class="tooltip">
+                    <a href="https://finance.yahoo.com/quote/{{ stock }}" target="_blank" class="stock-link">
+                        {{ stock }}
+                    </a>
+                    <span class="tooltiptext">View details for {{ stock }} on Yahoo Finance</span>
+                </h3>
+                
+                <p>Price: ${{ details["price"] }}</p>
+                <p>Allocated Shares: {{ details["shares"] }}</p>
+                <p>Allocation Percentage: {{ "%.0f" | format(details["allocation_percentage"] * 100) }} %</p>
+                <p>Invested Amount: ${{ "%.2f" | format(details["allocation"]) }}</p>
+                <div class="graph-container">
+                    <div id="graph-{{ stock }}"></div>
+                    <script>
+                        var graphData = {{ details["graph"] | safe }};
+                        Plotly.newPlot("graph-{{ stock }}", graphData.data, graphData.layout);
+                    </script>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+
+</body>
+</html>
