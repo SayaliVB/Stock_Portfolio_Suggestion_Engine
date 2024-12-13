@@ -4,6 +4,9 @@ import yfinance as yf
 import plotly
 import plotly.graph_objs as go
 import json
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 app = Flask(__name__)
 app.secret_key = "your_secret_key_here"  # Required for flash messages
