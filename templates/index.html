@@ -33,22 +33,28 @@
     <div class="form-container">
         <form method="post">
             <div class="step">
-                <h3>1. Enter Investment Amount</h3>
+                <h3>1. Enter Investment Amount</h3> <br>
                 <label for="investment">Investment Amount (USD):</label>
                 <input type="number" id="investment" name="investment" min="5000" required>
             </div>
 
             <div class="step">
-                <h3>2. Choose Investment Strategies (Up to 2)</h3>
+                <h3>2. Choose Investment Strategies (Up to 2)</h3> <br>
                 {% for strategy in strategies %}
                     <input type="checkbox" name="strategies" value="{{ strategy }}"> {{ strategy }}<br>
                 {% endfor %}
             </div>
 
             <div class="step">
-                <h3>3. Split Investment Equally?</h3>
+                <h3>3. Split Investment Equally among stategies?</h3> <br>
+                <input type="radio" name="split_strategy" value="yes" checked> Yes
+                <input type="radio" name="split_strategy" value="no"> No, Split randomly
+            </div>
+
+            <div class="step">
+                <h3>4. Use predefined ratio to split stocks for each strategy?</h3> <br>
                 <input type="radio" name="split_equally" value="yes" checked> Yes
-                <input type="radio" name="split_equally" value="no"> No
+                <input type="radio" name="split_equally" value="no"> No, Split randomly
             </div>
 
             <button type="submit">Submit</button>

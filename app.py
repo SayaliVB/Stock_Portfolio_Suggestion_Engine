@@ -18,10 +18,10 @@ app.secret_key = "your_secret_key_here"  # Required for flash messages
 # Predefined strategies and their stocks/ETFs
 STRATEGIES = {
     "Ethical Investing": {"AAPL": 0.34, "ADBE": 0.33, "NSRGY": 0.33},
-    "Growth Investing": {"AMZN": 0.4, "TSLA": 0.3, "GOOGL": 0.3},
+    "Growth Investing": {"AMZN": 0.34, "TSLA": 0.33, "GOOGL": 0.33},
     "Index Investing": {"VTI": 0.34, "IXUS": 0.33, "ILTB": 0.33},
-    "Quality Investing": {"MSFT": 0.4, "JNJ": 0.3, "PG": 0.3},
-    "Value Investing": {"BRK-B": 0.4, "KO": 0.3, "XOM": 0.3}
+    "Quality Investing": {"MSFT": 0.34, "JNJ": 0.33, "PG": 0.33},
+    "Value Investing": {"BRK-B": 0.34, "KO": 0.33, "XOM": 0.33}
 }
 
 def fetch_stock_prices(stocks):
@@ -103,6 +103,19 @@ def generate_plotly_graph(stock, trends):
     # Convert the figure to JSON
     return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
+def get_investment_allocation(investment, strategies, split_equally):
+    if split_equally:
+        # Split equally if 'split_equally' is True
+        allocation_per_strategy = investment / len(strategies)
+        allocations = {strategy: allocation_per_strategy for strategy in strategies}
+    else:
+        # If not equally, randomly allocate the total investment while keeping the ratios intact
+        random_allocations = [random.random() for _ in strategies]
+        total = sum(random_allocations)
+        allocations = {strategies[i]: (random_allocations[i] / total) * investment for i in range(len(strategies))}
+    
+    return allocations
+
 def get_stocks_and_ratios(strategy, split_equally):
     stocks = STRATEGIES[strategy]
     if not split_equally:
@@ -163,6 +176,7 @@ def home():
         investment = request.form.get("investment", type=float)
         strategies = request.form.getlist("strategies")
         split_equally = request.form.get("split_equally", "yes") == "yes"
+        split_strategy = request.form.get("split_strategy", "yes") == "yes"
 
         # Validate input
         if not investment or investment < 5000:
@@ -174,13 +188,13 @@ def home():
         total_value = 0
 
         # Handle split equally logic
-        allocation_per_strategy = investment / len(strategies)
+        allocation_per_strategy = get_investment_allocation(investment, strategies, split_strategy)
 
         for strategy in strategies:
             stocks = get_stocks_and_ratios(strategy, split_equally)
             stock_prices = fetch_stock_prices(stocks.keys())
             portfolio, strategy_total_value = calculate_portfolio_value(
-                allocation_per_strategy, stocks, stock_prices
+                allocation_per_strategy[strategy], stocks, stock_prices
             )
             results.append({
                 "strategy": strategy,
